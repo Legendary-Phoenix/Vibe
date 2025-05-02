@@ -31,11 +31,14 @@ export default function RootLayout() {
   },[]);
   if (!fontsLoaded) return null;
   return (
-    <Stack
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="(tab)" options={{ headerShown: false }}/> 
-      <Stack.Screen name="screens/HomeScreen" options={{ headerShown: false }}/>  
-    </Stack>
+    <>
+      {/* <StatusBar style="dark" backgroundColor="#fff" /> */}
+      <Stack
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="(tab)" options={{ headerShown: false }}/> 
+        <Stack.Screen name="screens/HomeScreen" options={{ headerShown: false }}/>  
+      </Stack>
+    </>
   );
 }

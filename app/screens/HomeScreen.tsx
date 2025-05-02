@@ -9,7 +9,8 @@ import Post from "../../components/Post.js";
 function HomeScreen() {
     const insets=useSafeAreaInsets();
     return (
-        <ScrollView style={{flex:1, paddingTop: insets.top, backgroundColor:"#fff"}}>
+        <ScrollView style={{marginTop: insets.top, backgroundColor:"#fff"}}>
+            
             <View style={styles.header}>
 
                 <View style={styles.vibeContainer}>
