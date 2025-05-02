@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { Feather, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import VibeText from "./VibeText.js";
 import VideoPlayer from "./VideoPlayer.js";
 
@@ -16,31 +16,58 @@ function Post(props) {
                     style={styles.profilePicture}
                     />
                 </TouchableOpacity>
+                <View style={styles.headerSection}>
 
-                <View style={styles.postMeta}>
                     <View style={styles.postMeta}>
-                        <VibeText weight="SemiBold" style={styles.username}>
-                            sarahthompson
-                        </VibeText>
+                        
+                        <View style={styles.topMeta}>
+
+                            <VibeText weight="SemiBold" style={styles.topMetaText}>
+                                sarahthompson {" "}
+                            </VibeText>
+                            <VibeText weight="ExtraBold" style={{color:"#fff"}}>
+                                    . {" "}
+                            </VibeText>
+                            <VibeText weight="SemiBold" style={styles.topMetaText}>
+                            5h
+                            </VibeText>
+
+                        </View>
+                        
+
+                        <View style={styles.audioMeta}>
+                            <FontAwesome5
+                            name="music"
+                            size={12}
+                            color="#fff"
+                            />
+                            <TouchableOpacity style={styles.audioTextContainer}>
+                                <VibeText weight="SemiBold" style={[styles.audioText,{marginLeft:7}]}>
+                                    Indila {" "}
+                                </VibeText>
+                                <VibeText weight="ExtraBold" style={{top:-2,color:"#fff"}}>
+                                    . {" "}
+                                </VibeText>
+                                <VibeText weight="SemiBold" style={styles.audioText}>
+                                Love Story
+                                </VibeText>
+                            </TouchableOpacity>
+                        </View>
+
                     </View>
 
-                    <View style={styles.audioMeta}>
-                        <FontAwesome5
-                        name="music"
-                        size={12}
-                        color="#fff"
-                        />
-                        <TouchableOpacity style={styles.audioTextContainer}>
-                            <VibeText weight="SemiBold" style={[styles.audioText,{marginLeft:7}]}>
-                                Indila {" "}
-                            </VibeText>
-                            <VibeText weight="ExtraBold" style={{top:-2,color:"#fff"}}>
-                                . {" "}
-                            </VibeText>
-                            <VibeText weight="SemiBold" style={styles.audioText}>
-                            Love Story
-                            </VibeText>
+                    <View style={styles.headerButtons}>
+                        <TouchableOpacity style={styles.followButton}>
+                            <VibeText weight="Bold" style={styles.followText}>Follow</VibeText>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.menuButton}>
+                            <MaterialCommunityIcons
+                            name="dots-vertical"
+                            size={22}
+                            color="#fff"
+                            />
+                        </TouchableOpacity>
+                        
                     </View>
 
                 </View>
@@ -127,7 +154,8 @@ const styles = StyleSheet.create({
     header:{
         marginHorizontal:15,
         flexDirection:"row",
-        zIndex:2
+        zIndex:2,
+        //justifyContent:"space-between"
     },
     profileIcon:{
         width:42,
@@ -143,12 +171,22 @@ const styles = StyleSheet.create({
         height:32,
         borderRadius: 30
     },
+    headerSection:{
+        marginLeft:10,
+        flexDirection:"row",
+        justifyContent:"space-between",
+        alignItems:"center",
+        flex:1,
+        flexWrap:"wrap"
+    },
     postMeta:{
-        marginHorizontal:10,
         flexDirection:"column"
     },
-    username:{
-        marginHorizontal:-10,
+    topMeta:{
+        flexDirection:"row",
+        alignItems:"center"
+    },
+    topMetaText:{
         //alignSelf:"center",
         marginTop:4,
         fontSize: 14.5,
@@ -169,6 +207,26 @@ const styles = StyleSheet.create({
         alignSelf:"center",
         //color:"#2F2F2F",
         color:"#fff"
+    },
+    headerButtons:{
+        flexDirection:"row",
+        alignItems:"center",
+    },
+    followButton:{
+        width:70,
+        height:30,
+        borderRadius:5,
+        padding:5,
+        backgroundColor:null,
+        borderColor:"#fff",
+        borderWidth:1
+    },
+    followText:{
+        color:"#fff",
+        textAlign:"center",
+    },
+    menuButton:{
+        marginLeft:10
     },
     videoContainer:{
         marginTop:-50,
