@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import BottomSheet from "./BottomSheet.js";
+import PostMenu from "./PostMenu.js";
 import VibeText from "./VibeText.js";
 import VideoPlayer from "./VideoPlayer.js";
 
 
 function Post(props) {
+    const [postMenuVisible,setPostMenuVisible]=useState(false);
+    const openPostMenu= ()=>{setPostMenuVisible(true)};
+    const closePostMenu= ()=>{setPostMenuVisible(false)};
     return (
         <View style={styles.postContainer}>
             <View style={styles.header}>
@@ -28,7 +33,7 @@ function Post(props) {
                             <VibeText weight="ExtraBold" style={{color:"#fff"}}>
                                     . {" "}
                             </VibeText>
-                            <VibeText weight="SemiBold" style={styles.topMetaText}>
+                            <VibeText weight="Medium" style={styles.topMetaText}>
                             5h
                             </VibeText>
 
@@ -42,13 +47,13 @@ function Post(props) {
                             color="#fff"
                             />
                             <TouchableOpacity style={styles.audioTextContainer}>
-                                <VibeText weight="SemiBold" style={[styles.audioText,{marginLeft:7}]}>
+                                <VibeText weight="Medium" style={[styles.audioText,{marginLeft:7}]}>
                                     Indila {" "}
                                 </VibeText>
                                 <VibeText weight="ExtraBold" style={{top:-2,color:"#fff"}}>
                                     . {" "}
                                 </VibeText>
-                                <VibeText weight="SemiBold" style={styles.audioText}>
+                                <VibeText weight="Medium" style={styles.audioText}>
                                 Love Story
                                 </VibeText>
                             </TouchableOpacity>
@@ -60,7 +65,7 @@ function Post(props) {
                         <TouchableOpacity style={styles.followButton}>
                             <VibeText weight="Bold" style={styles.followText}>Follow</VibeText>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.menuButton}>
+                        <TouchableOpacity style={styles.menuButton} onPress={openPostMenu}>
                             <MaterialCommunityIcons
                             name="dots-vertical"
                             size={22}
@@ -141,6 +146,21 @@ function Post(props) {
                     #Trailer #ShortFilm #SideProject #Adventure #FutureRelease #YouTube
                 </VibeText>
             </View>
+            <BottomSheet
+            isVisible={postMenuVisible}
+            onClose={closePostMenu}
+            height="40%"
+            >
+                <PostMenu/>
+            </BottomSheet>
+
+            {/* <BottomSheet
+            isVisible={postMenuVisible}
+            onClose={closePostMenu}
+            height="40%"
+            >
+               
+            </BottomSheet> */}
         
         </View>
     );
@@ -158,13 +178,15 @@ const styles = StyleSheet.create({
         //justifyContent:"space-between"
     },
     profileIcon:{
-        width:42,
+        width:40,
+        height:40,
+        marginTop:3,
         alignItems:"center",
         justifyContent:"center",
         borderRadius: 30,
         borderColor: "dodgerblue",
-        borderWidth:2.5,
-        padding:1
+        borderWidth:2,
+        padding:1,
     },
     profilePicture:{
         width:32,
@@ -173,6 +195,7 @@ const styles = StyleSheet.create({
     },
     headerSection:{
         marginLeft:10,
+        //marginTop:2,
         flexDirection:"row",
         justifyContent:"space-between",
         alignItems:"center",
@@ -189,13 +212,13 @@ const styles = StyleSheet.create({
     topMetaText:{
         //alignSelf:"center",
         marginTop:4,
-        fontSize: 14.5,
+        fontSize: 13,
         color:"#fff",
     },
     audioMeta:{
         flexDirection:"row",
         alignItems:"center",
-        marginTop:2
+        marginTop:-2
     },
     audioTextContainer:{
         alignItems:"center",
@@ -203,7 +226,7 @@ const styles = StyleSheet.create({
         flexDirection:"row"
     },
     audioText:{
-        fontSize: 13,
+        fontSize: 11.5,
         alignSelf:"center",
         //color:"#2F2F2F",
         color:"#fff"
@@ -216,14 +239,15 @@ const styles = StyleSheet.create({
         width:70,
         height:30,
         borderRadius:5,
-        padding:5,
+        padding:4,
         backgroundColor:null,
         borderColor:"#fff",
-        borderWidth:1
+        borderWidth:1,
     },
     followText:{
         color:"#fff",
         textAlign:"center",
+        fontSize:13
     },
     menuButton:{
         marginLeft:10
@@ -249,7 +273,8 @@ const styles = StyleSheet.create({
     },
     metricText:{
         color:"#000",
-        marginLeft:5
+        marginLeft:5,
+        fontSize:13
     },
     feedbackRight:{
         marginHorizontal:15,
@@ -259,7 +284,54 @@ const styles = StyleSheet.create({
         marginHorizontal:10,
     },
     descriptionText:{
+        fontSize:13,
+    },
+    bottomSheetHeader:{
+        flexDirection:"row",
+        justifyContent:"space-evenly",
+        marginVertical:10,
+    },
+    sheetHButtonContainer:{
+        justifyContent:"center",
+        alignItems:"center"
+    },
+    sheetHeaderButtons:{
+        width:50,
+        height: 50,
+        borderRadius:50,
+        borderWidth:0.8,
+        //#4B4B4B
+        //borderColor: "#C0C0C0",
+        //#363636
+        borderColor:"#262626",
+        padding:10,
+        alignItems:"center",
+        justifyContent:"center",
+        marginBottom:5
+    },
+    breakerLine:{
+        backgroundColor:"#E1E8ED",
+        height:0.5,
+        marginVertical:10
+    },
+    headerButtonText:{
+        fontSize:13,
+        color:"#363636"
+    },
+    bottomSheetBody:{
+        marginHorizontal:20,
+        justifyContent:"center"
+    },
+    bottomSheetOptions:{
+        flexDirection:"row",
+        alignItems:"center",
+        paddingVertical:10,
+        //justifyContent:"center"
+    },
+    optionsText:{
         fontSize:14.5,
+        color:"#000",
+        marginHorizontal:15,
     }
  })
 export default Post;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text } from "react-native";
 
-function VibeText({children,weight="Regular", linesNumber=undefined, style,...props}) {
+function VibeText({children,weight="Regular", family="Inter", linesNumber=undefined, style,...props}) {
     const [expand, setExpand]=useState(false);
     const toggleExpand=()=>{
         if (linesNumber!=undefined){
@@ -12,8 +12,9 @@ function VibeText({children,weight="Regular", linesNumber=undefined, style,...pr
         <Text
         style={[
             {
-                fontFamily: `ProximaNova-${weight}`,
-                flexWrap:"wrap"
+                fontFamily: `${family}-${weight}`,
+                flexWrap:"wrap",
+                //fontSize:
             },
             style,
         ]}
