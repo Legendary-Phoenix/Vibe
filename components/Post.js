@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomSheet from "./BottomSheet.js";
+import CommentsSection from "./CommentsSection.js";
+import Fleet from "./Fleet.js";
 import PostMenu from "./PostMenu.js";
 import VibeText from "./VibeText.js";
 import VideoPlayer from "./VideoPlayer.js";
@@ -10,17 +12,22 @@ import VideoPlayer from "./VideoPlayer.js";
 
 function Post(props) {
     const [postMenuVisible,setPostMenuVisible]=useState(false);
+    const [commentsMenuVisible, setCommentsMenuVisible]=useState(false);
     const openPostMenu= ()=>{setPostMenuVisible(true)};
     const closePostMenu= ()=>{setPostMenuVisible(false)};
+    const openCommentsMenu=()=>setCommentsMenuVisible(true);
+    const closeCommentsMenu=()=>setCommentsMenuVisible(false);
     return (
         <View style={styles.postContainer}>
             <View style={styles.header}>
-                <TouchableOpacity style={styles.profileIcon}>
-                    <Image
-                    source={require("../assets/images/avatar2.jpg")}
-                    style={styles.profilePicture}
-                    />
-                </TouchableOpacity>
+                <Fleet
+                size={32}
+                imageUri={require("../assets/images/avatar2.jpg")}
+                storyAvailable={true}
+                watched={false}
+                watchBorder={false}
+                borderWidth={2}
+                />
                 <View style={styles.headerSection}>
 
                     <View style={styles.postMeta}>
@@ -30,7 +37,7 @@ function Post(props) {
                             <VibeText weight="SemiBold" style={styles.topMetaText}>
                                 sarahthompson {" "}
                             </VibeText>
-                            <VibeText weight="ExtraBold" style={{color:"#fff"}}>
+                            <VibeText weight="ExtraBold" style={{color:"#fff", marginTop:-3}}>
                                     . {" "}
                             </VibeText>
                             <VibeText weight="Medium" style={styles.topMetaText}>
@@ -50,7 +57,7 @@ function Post(props) {
                                 <VibeText weight="Medium" style={[styles.audioText,{marginLeft:7}]}>
                                     Indila {" "}
                                 </VibeText>
-                                <VibeText weight="ExtraBold" style={{top:-2,color:"#fff"}}>
+                                <VibeText weight="ExtraBold" style={{top:-3,color:"#fff"}}>
                                     . {" "}
                                 </VibeText>
                                 <VibeText weight="Medium" style={styles.audioText}>
@@ -100,7 +107,7 @@ function Post(props) {
                         <VibeText weight="SemiBold" style={styles.metricText}>11.2K</VibeText>
                     </View>
                     <View style={styles.iconContainer}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={openCommentsMenu}>
                             <Ionicons
                             name="chatbubble-outline"
                             size={25}
@@ -154,13 +161,13 @@ function Post(props) {
                 <PostMenu/>
             </BottomSheet>
 
-            {/* <BottomSheet
-            isVisible={postMenuVisible}
-            onClose={closePostMenu}
-            height="40%"
+            <BottomSheet
+            isVisible={commentsMenuVisible}
+            onClose={closeCommentsMenu}
+            height="90%"
             >
-               
-            </BottomSheet> */}
+               <CommentsSection/>
+            </BottomSheet>
         
         </View>
     );
@@ -173,29 +180,13 @@ const styles = StyleSheet.create({
     },
     header:{
         marginHorizontal:15,
+        marginVertical:5,
         flexDirection:"row",
         zIndex:2,
         //justifyContent:"space-between"
     },
-    profileIcon:{
-        width:40,
-        height:40,
-        marginTop:3,
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius: 30,
-        borderColor: "dodgerblue",
-        borderWidth:2,
-        padding:1,
-    },
-    profilePicture:{
-        width:32,
-        height:32,
-        borderRadius: 30
-    },
     headerSection:{
         marginLeft:10,
-        //marginTop:2,
         flexDirection:"row",
         justifyContent:"space-between",
         alignItems:"center",
@@ -203,15 +194,15 @@ const styles = StyleSheet.create({
         flexWrap:"wrap"
     },
     postMeta:{
-        flexDirection:"column"
+        flexDirection:"column",
     },
     topMeta:{
         flexDirection:"row",
-        alignItems:"center"
+        alignItems:"center",
+        marginTop:2
     },
     topMetaText:{
         //alignSelf:"center",
-        marginTop:4,
         fontSize: 13,
         color:"#fff",
     },
@@ -253,7 +244,7 @@ const styles = StyleSheet.create({
         marginLeft:10
     },
     videoContainer:{
-        marginTop:-50,
+        marginTop:-55,
         zIndex:1
     },
     feedbackIcons:{

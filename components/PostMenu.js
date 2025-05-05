@@ -2,6 +2,7 @@ import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import BreakerLine from "./BreakerLine.js";
 import VibeText from "./VibeText.js";
 
 function PostMenu(props) {
@@ -37,7 +38,7 @@ function PostMenu(props) {
 
             </View>
 
-            <View style={styles.breakerLine}></View> 
+            <BreakerLine/>
 
             <View style={styles.bottomSheetBody}>
 
@@ -121,11 +122,6 @@ function PostMenu(props) {
         alignItems:"center",
         justifyContent:"center",
         marginBottom:5
-    },
-    breakerLine:{
-        backgroundColor:"#E1E8ED",
-        height:0.5,
-        marginVertical:10
     },
     headerButtonText:{
         fontSize:13,

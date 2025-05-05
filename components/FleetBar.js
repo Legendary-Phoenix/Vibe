@@ -1,55 +1,35 @@
 import React from 'react';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import avatar from "../logic/avatar.js";
+import Fleet from "./Fleet.js";
 
 function FleetBar() {
     return (
         <ScrollView 
         horizontal={true}
-        style={styles.carousel}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={
             {justifyContent:"space-evenly", alignItems:"flex-start", 
-            paddingLeft:10, paddingRight:20
+            paddingLeft:15, paddingRight:5
             }}>
             {
                 Object.values(avatar).map(avatar=>(
-                    <View style={styles.fleetContainer}>
-                        <TouchableOpacity>
-                        <View style={styles.fleet}>
-                            <Image
-                            style={styles.fleetProfilePic}
-                            source={avatar}
-                            />
-                        </View>
-                        </TouchableOpacity>
+                    <View style={{marginRight:10}}>
+                        <Fleet
+                        size={60}
+                        imageUri={avatar}
+                        storyAvailable={true}
+                        watched={false}
+                        watchBorder={true}
+                        borderWidth={3}
+                        borderRatio={10}
+                        />
                     </View>
-                        
+                                         
             ))};
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    carousel:{
-        paddingVertical:5,
-    },
-    fleetContainer:{
-        width:80,
-        alignItems:"center",
-    },
-    fleet:{
-        borderRadius:50,
-        borderWidth:3,
-        borderColor:"dodgerblue",
-        padding:1.5,
-    },
-    fleetProfilePic:{
-        width:60,
-        height:60,
-        borderRadius:50,
-    }
-})
 
 export default FleetBar;

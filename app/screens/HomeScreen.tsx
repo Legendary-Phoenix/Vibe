@@ -5,50 +5,53 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import FleetBar from "../../components/FleetBar.js";
 import Post from "../../components/Post.js";
+import SafeView from "../../components/SafeView.js";
 
 function HomeScreen() {
     const insets=useSafeAreaInsets();
     return (
-        <ScrollView style={{marginTop: insets.top, backgroundColor:"#fff"}}>
-            
-            <View style={styles.header}>
+        <SafeView>
+            <ScrollView style={{backgroundColor:"#fff"}}>
+                
+                <View style={styles.header}>
 
-                <View style={styles.vibeContainer}>
-                    <Image
-                    source={require("../../assets/images/vibe.png")}
-                    style={styles.vibeImage}
-                    />
-                    <TouchableOpacity>
-                        <Entypo
-                        name="chevron-down"
-                        size={18}
-                        color={"#000"}
+                    <View style={styles.vibeContainer}>
+                        <Image
+                        source={require("../../assets/images/vibe.png")}
+                        style={styles.vibeImage}
                         />
-                    </TouchableOpacity>
-                </View>
+                        <TouchableOpacity>
+                            <Entypo
+                            name="chevron-down"
+                            size={18}
+                            color={"#000"}
+                            />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={styles.headerIcon}>
-                    <TouchableOpacity>
-                            <Feather
-                            name="heart"
+                    <View style={styles.headerIcon}>
+                        <TouchableOpacity>
+                                <Feather
+                                name="heart"
+                                size={24}
+                                color={"#000"}
+                                />
+                            </TouchableOpacity>
+                        <TouchableOpacity style={styles.messageIcon}>
+                            <Ionicons
+                            name="chatbubble-ellipses-outline"
                             size={24}
                             color={"#000"}
                             />
                         </TouchableOpacity>
-                    <TouchableOpacity style={styles.messageIcon}>
-                        <Ionicons
-                        name="chatbubble-ellipses-outline"
-                        size={24}
-                        color={"#000"}
-                        />
-                    </TouchableOpacity>
+                    </View>
+
                 </View>
 
-            </View>
-
-            <FleetBar/>
-            <Post/>
-        </ScrollView>
+                <FleetBar/>
+                <Post/>
+            </ScrollView>
+        </SafeView>
     );
 }
 
