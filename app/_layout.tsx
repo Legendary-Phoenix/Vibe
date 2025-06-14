@@ -4,12 +4,12 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "./context/AuthProvider.js";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded, setFontsLoaded]= useState(false);
-
   useEffect(()=>{
     async function loadFonts(){
       await Font.loadAsync({
@@ -56,15 +56,16 @@ export default function RootLayout() {
   },[]);
   if (!fontsLoaded) return null;
   return (
-    <SafeAreaProvider>
-      {/* <StatusBar style="dark" backgroundColor="#fff" /> */}
-      <StatusBar style="dark" backgroundColor="white" translucent={false} />
-      <Stack
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="(tab)" options={{ headerShown: false }}/> 
-        <Stack.Screen name="screens/HomeScreen" options={{ headerShown: false }}/>  
-      </Stack>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <SafeAreaProvider>
+        {/* <StatusBar style="dark" backgroundColor="#fff" /> */}
+        <StatusBar style="dark" backgroundColor="white" translucent={false} />
+        <Stack
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="(tab)" options={{ headerShown: false }}/> 
+        </Stack>
+      </SafeAreaProvider>
+    </AuthProvider>
   );
 }

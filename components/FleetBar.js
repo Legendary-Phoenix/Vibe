@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View } from "react-native";
 
 import avatar from "../logic/avatar.js";
-import Fleet from "./Fleet.js";
+import FleetLegacy from "./FleetLegacy.js";
 
 function FleetBar() {
     return (
@@ -16,9 +16,9 @@ function FleetBar() {
             {
                 Object.values(avatar).map(avatar=>(
                     <View style={{marginRight:10}}>
-                        <Fleet
+                        <FleetLegacy
                         size={60}
-                        imageUri={avatar}
+                        imagePath={avatar}
                         storyAvailable={true}
                         watched={false}
                         watchBorder={true}

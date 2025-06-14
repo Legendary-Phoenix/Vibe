@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import api from "@/utils/axios.js";
+import React, { useEffect, useState } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 
-function Fleet({size, imageUri, storyAvailable, watched,
-    watchBorder=true, borderWidth=2, borderColor="dodgerblue", 
-    borderRatio=8,
-    }) {
+function Fleet({size, imagePath, storyAvailable, watched, borderWidth=2, borderRatio=8}) {
     const [watchStatus, setWatchStatus]=useState(watched);
+    const [publicUrl, setPublicUrl]=useState("");
+
+    const fetchPublicUrl=async()=>{
+        try{
+            const response= await api.get(`/public-url?bucketName=avatars&mediaPath=${imagePath}`);
+            const publicUrl=response.data.data.publicUrl;
+            setPublicUrl(publicUrl);
+            console.log("Avatar public url",publicUrl);
+        } catch (error){
+            console.error("Failed to fetch public url for media. Error:",error);
+        }
+    };
+
+    useEffect(()=>{
+        const init=async()=>{
+            await fetchPublicUrl();
+        };
+        init();
+    },[]);
+
     const updateWatchStatus = () => {
         if (!watchStatus) {
           setWatchStatus(true);
@@ -16,13 +34,9 @@ function Fleet({size, imageUri, storyAvailable, watched,
             return {};
         }
 
-        if (watchStatus && !watchBorder){
-            return {};
-        }
-
         return {
             borderRadius: 50,
-            borderColor: watchStatus ? "#C0C0C0" : borderColor,
+            borderColor: watchStatus ? "#C0C0C0" : "dodgerblue",
             borderWidth,
             padding:1.5
         };
@@ -40,7 +54,7 @@ function Fleet({size, imageUri, storyAvailable, watched,
         borderStyle()
         ]}>
             <Image
-            source={imageUri}
+            source={{uri:publicUrl}}
             style={{width: size,height: size,borderRadius:50}}
             />
         </TouchableOpacity>

@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/context/AuthProvider.js", "app/(tab)/home.js", "app/(tab)/index.js", "app/auth/confirm.js", "app/auth/auth.js"  ]
 }

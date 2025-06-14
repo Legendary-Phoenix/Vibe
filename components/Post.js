@@ -1,31 +1,58 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import BottomSheet from "./BottomSheet.js";
 import CommentsSection from "./CommentsSection.js";
 import Fleet from "./Fleet.js";
+import LiveTimeString from "./LiveTimeString.js";
+import MediaCarousel from './MediaCarousel.js';
 import PostMenu from "./PostMenu.js";
 import VibeText from "./VibeText.js";
-import VideoPlayer from "./VideoPlayer.js";
 
 
-function Post(props) {
+function Post({postData}) {
+    const postID=postData.postid;
+    const ownerAccountID=postData.owneraccountid;
     const [postMenuVisible,setPostMenuVisible]=useState(false);
     const [commentsMenuVisible, setCommentsMenuVisible]=useState(false);
     const openPostMenu= ()=>{setPostMenuVisible(true)};
     const closePostMenu= ()=>{setPostMenuVisible(false)};
     const openCommentsMenu=()=>setCommentsMenuVisible(true);
     const closeCommentsMenu=()=>setCommentsMenuVisible(false);
+    const themeColor=postData.media[0].renderAspectRatio==="4:5" ? "#fff" : "#000";
+    const renderFollowButton=()=>{
+        if (!postData.isfollowing){
+            return(
+                <TouchableOpacity 
+                style={[styles.followButton,
+                {
+                    borderColor:postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB", 
+                    backgroundColor:postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB",
+                }]}>
+                    <VibeText weight="SemiBold" style={[styles.followText,{color:themeColor}]}>Follow</VibeText>
+                </TouchableOpacity>
+            );
+        }
+    };
+
+    
+    const formatMetrics=(metric)=>{
+        if (metric > 1000){
+            const formattedMetric=(Number(metric)/1000).toFixed(2);
+            return `${formattedMetric}K`;
+        } else{
+            return metric;
+        }
+    }
     return (
         <View style={styles.postContainer}>
             <View style={styles.header}>
                 <Fleet
                 size={32}
-                imageUri={require("../assets/images/avatar2.jpg")}
-                storyAvailable={true}
-                watched={false}
-                watchBorder={false}
+                imagePath={postData.fleet.avatarpath}
+                storyAvailable={postData.fleet.isstoryavailable}
+                watched={postData.fleet.iswatched}
                 borderWidth={2}
                 />
                 <View style={styles.headerSection}>
@@ -34,15 +61,22 @@ function Post(props) {
                         
                         <View style={styles.topMeta}>
 
-                            <VibeText weight="SemiBold" style={styles.topMetaText}>
-                                sarahthompson {" "}
+                            <VibeText weight="SemiBold" style={{
+                                fontSize:13,
+                                color: themeColor
+                            }}>
+                                {postData.username} {" "}
                             </VibeText>
-                            <VibeText weight="ExtraBold" style={{color:"#fff", marginTop:-3}}>
+                            <VibeText weight="ExtraBold" style={{
+                                color: themeColor,
+                                marginTop: -3
+                            }}>
                                     . {" "}
                             </VibeText>
-                            <VibeText weight="Medium" style={styles.topMetaText}>
-                            5h
-                            </VibeText>
+                            <LiveTimeString timestamp={postData.createdat} style={{
+                                fontSize:13,
+                                color: themeColor
+                            }}/>
 
                         </View>
                         
@@ -51,16 +85,30 @@ function Post(props) {
                             <FontAwesome5
                             name="music"
                             size={12}
-                            color="#fff"
+                            color={themeColor}
                             />
                             <TouchableOpacity style={styles.audioTextContainer}>
-                                <VibeText weight="Medium" style={[styles.audioText,{marginLeft:7}]}>
+                                <VibeText weight="Medium" style={[{
+                                fontSize:11.5,
+                                alignSelf:"center",
+                                color: themeColor,
+                                marginLeft:7
+                                }]}>
                                     Indila {" "}
                                 </VibeText>
-                                <VibeText weight="ExtraBold" style={{top:-3,color:"#fff"}}>
+                                <VibeText weight="ExtraBold" 
+                                style={{
+                                    top:-3,
+                                    color: themeColor,
+                                }}
+                                >
                                     . {" "}
                                 </VibeText>
-                                <VibeText weight="Medium" style={styles.audioText}>
+                                <VibeText weight="Medium" style={{
+                                fontSize:11.5,
+                                alignSelf:"center",
+                                color: themeColor,
+                                }}>
                                 Love Story
                                 </VibeText>
                             </TouchableOpacity>
@@ -69,14 +117,12 @@ function Post(props) {
                     </View>
 
                     <View style={styles.headerButtons}>
-                        <TouchableOpacity style={styles.followButton}>
-                            <VibeText weight="Bold" style={styles.followText}>Follow</VibeText>
-                        </TouchableOpacity>
+                        {renderFollowButton()}
                         <TouchableOpacity style={styles.menuButton} onPress={openPostMenu}>
                             <MaterialCommunityIcons
                             name="dots-vertical"
                             size={22}
-                            color="#fff"
+                            color={themeColor}
                             />
                         </TouchableOpacity>
                         
@@ -86,13 +132,8 @@ function Post(props) {
 
             </View>
 
-            <View style={styles.videoContainer}>
-                <VideoPlayer 
-                sourceUri="https://www.w3schools.com/html/mov_bbb.mp4"
-                height={530}
-                />
-            </View>
-
+            <MediaCarousel mediaData={postData.media}/>
+           
             <View style={styles.feedbackIcons}>
                 <View style={styles.feedbackLeft}>
 
@@ -104,7 +145,7 @@ function Post(props) {
                             color={"#000"}
                             />
                         </TouchableOpacity>
-                        <VibeText weight="SemiBold" style={styles.metricText}>11.2K</VibeText>
+                        <VibeText weight="SemiBold" style={styles.metricText}>{formatMetrics(postData.likescount)}</VibeText>
                     </View>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={openCommentsMenu}>
@@ -114,7 +155,7 @@ function Post(props) {
                             color={"#000"}
                             />
                         </TouchableOpacity>
-                        <VibeText weight="SemiBold" style={styles.metricText}>207</VibeText>
+                        <VibeText weight="SemiBold" style={styles.metricText}>{formatMetrics(postData.commentscount)}</VibeText>
                     </View>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity>
@@ -124,7 +165,7 @@ function Post(props) {
                             color={"#000"}
                             />
                         </TouchableOpacity>
-                        <VibeText weight="SemiBold" style={styles.metricText}>3,045</VibeText>
+                        <VibeText weight="SemiBold" style={styles.metricText}>{formatMetrics(postData.sharescount)}</VibeText>
                     </View>
 
                 </View>
@@ -132,7 +173,7 @@ function Post(props) {
                 <View style={styles.feedbackRight}>
                     <TouchableOpacity>
                         <FontAwesome
-                        name="bookmark-o"
+                        name={postData.isbookmarked ? "bookmark" : "bookmark-o"}
                         size={25}
                         color={"#000"}
                         />
@@ -143,14 +184,10 @@ function Post(props) {
 
             <View style={styles.descContainer}>
                 <VibeText weight="SemiBold" style={styles.descriptionText}>
-                    sarahthompson
+                    {postData.username}
                 </VibeText>
-                <VibeText linesNumber={2} style={styles.descriptionText} >
-                    This is a short film I created 🥰 as a side project. It's about a character called Fluffy who is a curious, kind bunny with a child-like mind. He explores the world and finds himself in adventures beyond what he's accustomed to. Here, Fluffy understands himself and his abilities better-helps to counter villains and meets new friends along the way. 
-                    {"\n\n"}
-                    Watch this full on 23rd November (the expected release date) on YouTube. 😎🙌
-                    {"\n\n"}
-                    #Trailer #ShortFilm #SideProject #Adventure #FutureRelease #YouTube
+                <VibeText linesNumber={2} expand={true} style={styles.descriptionText}>
+                   {postData.description}
                 </VibeText>
             </View>
             <BottomSheet
@@ -201,11 +238,6 @@ const styles = StyleSheet.create({
         alignItems:"center",
         marginTop:2
     },
-    topMetaText:{
-        //alignSelf:"center",
-        fontSize: 13,
-        color:"#fff",
-    },
     audioMeta:{
         flexDirection:"row",
         alignItems:"center",
@@ -216,12 +248,6 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         flexDirection:"row"
     },
-    audioText:{
-        fontSize: 11.5,
-        alignSelf:"center",
-        //color:"#2F2F2F",
-        color:"#fff"
-    },
     headerButtons:{
         flexDirection:"row",
         alignItems:"center",
@@ -231,21 +257,14 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:5,
         padding:4,
-        backgroundColor:null,
-        borderColor:"#fff",
         borderWidth:1,
     },
     followText:{
-        color:"#fff",
         textAlign:"center",
         fontSize:13
     },
     menuButton:{
         marginLeft:10
-    },
-    videoContainer:{
-        marginTop:-55,
-        zIndex:1
     },
     feedbackIcons:{
         flexDirection:"row",

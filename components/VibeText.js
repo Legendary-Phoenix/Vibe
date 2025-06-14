@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Text } from "react-native";
 
-function VibeText({children,weight="Regular", family="Inter", linesNumber=undefined, style,...props}) {
-    const [expand, setExpand]=useState(false);
+function VibeText({children,weight="Regular", family="Inter", expand=false, 
+    linesNumber=undefined, style,...props}) {
+    const [expandState, setExpand]=useState(false);
     const toggleExpand=()=>{
         if (linesNumber!=undefined){
             setExpand(prev => !prev);
@@ -18,9 +19,9 @@ function VibeText({children,weight="Regular", family="Inter", linesNumber=undefi
             },
             style,
         ]}
-        numberOfLines={expand ? undefined : linesNumber}
+        numberOfLines={expandState ? undefined : linesNumber}
         ellipsizeMode='tail'
-        onPress={toggleExpand}
+        onPress={expand ? toggleExpand : null}
         {...props}
         >
            {children}

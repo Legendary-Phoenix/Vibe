@@ -1,26 +1,34 @@
-import { Video } from "expo-av";
-import React, { useRef } from 'react';
-import { StyleSheet, View } from "react-native";
+import { useVideoPlayer, VideoView } from "expo-video";
+import { Dimensions, StyleSheet, View } from "react-native";
 
-function VideoPlayer({sourceUri, height}) {
-    const video=useRef(null);
+const {width}=Dimensions.get("window");
+
+function VideoPlayer({source,videoWidth=width,videoHeight=width,contentFit="cover"}) {
+    const player=useVideoPlayer(
+        source,
+        (player)=>{
+            player.loop=true;
+            player.play();
+        }
+    );
     return (
-        <View style={{width:"100%", height}}>
-            <Video
-                ref={video}
-                source={{uri:sourceUri}}
-                style={styles.video}
-                useNativeControls
-                resizeMode="cover"
-                isLooping
-                shouldPlay
+        <View style={styles.container}>
+            <VideoView
+            player={player}
+            width={videoWidth}
+            height={videoHeight}
+            contentFit={contentFit}
+            showControls
             />
         </View>
     );
 }
+
 const styles = StyleSheet.create({
-    video: {
-        flex: 1,
-    }
+    container:{
+        width:"100%",
+        backgroundColor:"#000"
+    },
 })
+
 export default VideoPlayer;

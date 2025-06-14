@@ -1,0 +1,21 @@
+import axios from "axios";
+import * as SecureStore from 'expo-secure-store';
+
+const api=axios.create({
+    baseURL:'https://vibe-api.up.railway.app',
+    timeout:10000,
+    headers:{
+        'Content-Type':'application/json'
+    },
+});
+
+api.interceptors.request.use(async(config)=>{
+    const token=await SecureStore.getItemAsync("accessToken");
+    if (token){
+        config.headers.Authorization=`Bearer ${token}`;
+    }
+    console.log("Request intercepted. Access token attached");
+    return config;
+});
+
+export default api;
