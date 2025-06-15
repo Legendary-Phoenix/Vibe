@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,7 +11,7 @@ import PostMenu from "./PostMenu.js";
 import VibeText from "./VibeText.js";
 
 
-function Post({postData}) {
+const Post= memo(({postData}) => {
     const postID=postData.postid;
     const ownerAccountID=postData.owneraccountid;
     const [postMenuVisible,setPostMenuVisible]=useState(false);
@@ -27,7 +27,7 @@ function Post({postData}) {
                 <TouchableOpacity 
                 style={[styles.followButton,
                 {
-                    borderColor:postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB", 
+                    borderColor:postData.media[0].renderAspectRatio==="4:5" ? "#fff" : "#EBEBEB", 
                     backgroundColor:postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB",
                 }]}>
                     <VibeText weight="SemiBold" style={[styles.followText,{color:themeColor}]}>Follow</VibeText>
@@ -208,7 +208,7 @@ function Post({postData}) {
         
         </View>
     );
-}
+});
 
 const styles = StyleSheet.create({
     postContainer:{
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
         marginHorizontal:15,
         marginVertical:5,
         flexDirection:"row",
-        zIndex:2,
+        zIndex:3,
         //justifyContent:"space-between"
     },
     headerSection:{

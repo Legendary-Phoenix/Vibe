@@ -1,8 +1,8 @@
 import api from "@/utils/axios.js";
 import { Entypo, Feather, Ionicons } from '@expo/vector-icons';
 import * as SecureStore from "expo-secure-store";
-import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 //import {debounce} from "lodash";
 
 import FleetBar from "../../components/FleetBar.js";
@@ -13,19 +13,33 @@ function HomeScreen() {
     const [post, setPost]=useState([]);
     const [loading, setLoading]=useState(false);
     const [nextCursor,setNextCursor]=useState(1);
+    const [hasMore, setHasMore]=useState(true);
+    const requestRef = useRef({ pending: false }).current;
    
     const fetchPost=async ()=>{
+        if (requestRef.pending) return;
+        requestRef.pending = true;
+
         setLoading(true);
         const accountID=await SecureStore.getItemAsync("accountID");
-        console.log("AccountID:",accountID);
+
         try{
             const response=await api.get(`/post?accountID=${accountID}&cursorIndex=${nextCursor}
                 &postType=Feed`);
             console.log("Post data fetched");
             setLoading(false);
-            setNextCursor(response.data.nextCursor);
-            setPost(response.data.data);
-            console.log("Post Data:",response.data.data);
+            const postData=response.data.data;
+            if(postData.length!==0){
+                setNextCursor(response.data.nextCursor);
+                setPost(prev => {
+                    const existingIds = new Set(prev.map(p => p.postid));
+                    const newPosts = response.data.data.filter(p => !existingIds.has(p.postid));
+                    return [...prev, ...newPosts];
+                });
+            } else{
+                console.log("No more post data available")
+                setHasMore(false);
+            }
         } catch (error){
             setLoading(false);
             if (error.response?.data?.errorMessage) {
@@ -33,8 +47,13 @@ function HomeScreen() {
             } else {
                 console.error("Network or unknown error:", error.message || error);
             }
+        } finally {
+            setTimeout(() => {
+                requestRef.pending = false;
+            }, 1000); // lock for 1 second-prevents multiple refires
         }
     }
+
     useEffect(()=>{
         fetchPost();
     },[]);
@@ -79,13 +98,30 @@ function HomeScreen() {
             </>
         );
     }
+
+    const renderPostItem = useCallback(({ item }) => {
+        return <Post postData={item} />;
+    }, []);
+
     return (
         <SafeView style={styles.container}>
             <FlatList
             data={post}
             keyExtractor={item => item.postid}
-            renderItem={({item})=><Post postData={item}/>}
+            renderItem={renderPostItem}
+            initialNumToRender={5}
+            maxToRenderPerBatch={5} 
+            updateCellsBatchingPeriod={100} 
+            windowSize={10}
             ListHeaderComponent={ListHeaderComponent}
+            ListFooterComponent={() => loading ? <ActivityIndicator size="small"/> : null}
+            onEndReachedThreshold={0.8}
+            onEndReached={()=>{
+                console.log("onEndReached called");
+                if (hasMore && !loading){
+                    fetchPost();
+                }
+            }}
             />
             
         </SafeView>

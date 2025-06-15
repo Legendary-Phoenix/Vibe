@@ -14,7 +14,6 @@ api.interceptors.request.use(async(config)=>{
     if (token){
         config.headers.Authorization=`Bearer ${token}`;
     }
-    console.log("Request intercepted. Access token attached");
     return config;
 });
 

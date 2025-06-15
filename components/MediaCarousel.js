@@ -10,7 +10,7 @@ function MediaCarousel({ mediaData }) {
     <View style={
         {
             marginTop: mediaData[0]["renderAspectRatio"]==="4:5" ? -55 : 0,
-            zIndex:1
+            zIndex:2
         }
     }>
       <FlatList
@@ -65,12 +65,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         alignSelf: 'center',
+        zIndex:1
     },
     dot: {
         height: 6,
         borderRadius: 3,
-        backgroundCpolor: '#fff',
+        backgroundColor: '#fff',
         marginHorizontal: 4,
+        zIndex:1
     },
 });
 

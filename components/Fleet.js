@@ -1,5 +1,5 @@
 import api from "@/utils/axios.js";
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 
 function Fleet({size, imagePath, storyAvailable, watched, borderWidth=2, borderRatio=8}) {
@@ -11,7 +11,6 @@ function Fleet({size, imagePath, storyAvailable, watched, borderWidth=2, borderR
             const response= await api.get(`/public-url?bucketName=avatars&mediaPath=${imagePath}`);
             const publicUrl=response.data.data.publicUrl;
             setPublicUrl(publicUrl);
-            console.log("Avatar public url",publicUrl);
         } catch (error){
             console.error("Failed to fetch public url for media. Error:",error);
         }

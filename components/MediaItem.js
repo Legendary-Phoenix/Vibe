@@ -1,5 +1,5 @@
 import api from "@/utils/axios.js";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import VideoPlayer from "./VideoPlayer.js";
 const { width } = Dimensions.get('window');
@@ -14,7 +14,6 @@ function MediaItem({mediaPath,mediaType, renderAspectRatio,cropOption}) {
             const response= await api.get(`/public-url?bucketName=feed&mediaPath=${formattedMediaPath}`);
             const publicUrl=response.data.data.publicUrl;
             setPublicUrl(publicUrl);
-            console.log("Public Url:",publicUrl);
         } catch (error){
             console.error("Failed to fetch public url for media. Error:",error);
         }
