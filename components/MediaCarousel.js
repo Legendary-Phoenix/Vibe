@@ -1,63 +1,94 @@
-import { useRef } from 'react';
+import { memo, useCallback, useRef, useState } from 'react';
 import { Animated, Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import MediaItem from './MediaItem';
 const { width } = Dimensions.get('window');
 
-function MediaCarousel({ mediaData }) {
+const MediaCarousel=memo(({ mediaData, isVisible=false })=> {
   const scrollX = useRef(new Animated.Value(0)).current;
+  const [currentIndex, setCurrentIndex]=useState(0);
+
+  const onScroll=useCallback(
+    Animated.event(
+      [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+      { 
+        useNativeDriver: false ,
+        listener: (event) => {
+          const offsetX=event.nativeEvent.contentOffset.x;
+          const index=Math.round(offsetX/width);
+          setCurrentIndex(index);
+        }
+      }
+    ),[]);
+
+  const renderMediaItem=useCallback(({item, index})=>(
+    <MediaItem 
+      mediaPath={item.mediaPath} 
+      mediaType={item.mediaType} 
+      renderAspectRatio={item.renderAspectRatio}
+      cropOption={item.cropOption}
+      isVisible={isVisible&&index===currentIndex}
+    />
+  ), [isVisible,currentIndex]);
+
+  const keyExtractor=useCallback((_,index)=>index.toString(),[]);
+
+  const getItemLayout=useCallback((data,index)=>({
+    length:width,
+    offset:width*index,
+    index,
+  }),[]);
     
   return (
     <View style={
         {
             marginTop: mediaData[0]["renderAspectRatio"]==="4:5" ? -55 : 0,
-            zIndex:2
+            zIndex:2,
         }
     }>
       <FlatList
         data={mediaData}
-        keyExtractor={(_, index) => index.toString()}
+        keyExtractor={keyExtractor}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
 
-        renderItem={({item})=>
-        <MediaItem 
-        mediaPath={item.mediaPath} 
-        mediaType={item.mediaType} 
-        renderAspectRatio={item.renderAspectRatio}
-        cropOption={item.cropOption}
-        />}
-
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
-        )}
+        renderItem={renderMediaItem}
+        onScroll={onScroll}
+        getItemLayout={getItemLayout}
+        //to change
+        initialNumToRender={1}
+        maxToRenderPerBatch={1}
+        windowSize={3}
+        removeClippedSubviews={true}
+        scrollEventThrottle={16}
       />
-      <View style={styles.pagination}>
-        {mediaData.map((_, index) => {
-          const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
-          const dotWidth = scrollX.interpolate({
-            inputRange,
-            outputRange: [6, 10, 6],
-            extrapolate: 'clamp',
-          });
-          const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.3, 1, 0.3],
-            extrapolate: 'clamp',
-          });
+      {mediaData.length>1&&(
+        <View style={styles.pagination}>
+          {mediaData.map((_, index) => {
+            const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
+            const dotWidth = scrollX.interpolate({
+              inputRange,
+              outputRange: [6, 10, 6],
+              extrapolate: 'clamp',
+            });
+            const opacity = scrollX.interpolate({
+              inputRange,
+              outputRange: [0.3, 1, 0.3],
+              extrapolate: 'clamp',
+            });
 
-          return (
-            <Animated.View
-              key={index}
-              style={[styles.dot, { width: dotWidth, opacity }]}
-            />
-          );
-        })}
-      </View>
+            return (
+              <Animated.View
+                key={index}
+                style={[styles.dot, { width: dotWidth, opacity }]}
+              />
+            );
+          })}
+        </View>
+      )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
     pagination: {

@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Feather, FontAwesome, FontAwesome5, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,40 +11,48 @@ import PostMenu from "./PostMenu.js";
 import VibeText from "./VibeText.js";
 
 
-const Post= memo(({postData}) => {
+const Post= memo(({postData, isVisible=false}) => {
     const postID=postData.postid;
     const ownerAccountID=postData.owneraccountid;
     const [postMenuVisible,setPostMenuVisible]=useState(false);
     const [commentsMenuVisible, setCommentsMenuVisible]=useState(false);
-    const openPostMenu= ()=>{setPostMenuVisible(true)};
-    const closePostMenu= ()=>{setPostMenuVisible(false)};
-    const openCommentsMenu=()=>setCommentsMenuVisible(true);
-    const closeCommentsMenu=()=>setCommentsMenuVisible(false);
-    const themeColor=postData.media[0].renderAspectRatio==="4:5" ? "#fff" : "#000";
-    const renderFollowButton=()=>{
+
+    const openPostMenu= useCallback(()=>setPostMenuVisible(true),[]);
+    const closePostMenu= useCallback(()=>setPostMenuVisible(false),[]);
+    const openCommentsMenu=useCallback(()=>setCommentsMenuVisible(true),[]);
+    const closeCommentsMenu=useCallback(()=>setCommentsMenuVisible(false),[]);
+
+    const themeColor=useMemo(()=>postData.media[0].renderAspectRatio==="4:5" ? "#fff" : "#000",[postData.media]);
+    
+    const borderColor=useMemo(()=>postData.media[0].renderAspectRatio==="4.5" ? "#fff" : "#EBEBEB",[postData.media]);
+    const backgroundColor=useMemo(()=>postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB",[postData.media]);
+
+    const renderFollowButton=useCallback(()=>{
         if (!postData.isfollowing){
             return(
                 <TouchableOpacity 
                 style={[styles.followButton,
                 {
-                    borderColor:postData.media[0].renderAspectRatio==="4:5" ? "#fff" : "#EBEBEB", 
-                    backgroundColor:postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB",
+                    borderColor, 
+                    backgroundColor,
                 }]}>
                     <VibeText weight="SemiBold" style={[styles.followText,{color:themeColor}]}>Follow</VibeText>
                 </TouchableOpacity>
             );
         }
-    };
+        return null;
+    },[postData.isfollowing, borderColor, backgroundColor, themeColor]);
 
     
-    const formatMetrics=(metric)=>{
+    const formatMetrics=useCallback((metric)=>{
         if (metric > 1000){
             const formattedMetric=(Number(metric)/1000).toFixed(2);
             return `${formattedMetric}K`;
         } else{
             return metric;
         }
-    }
+    },[]);
+
     return (
         <View style={styles.postContainer}>
             <View style={styles.header}>
@@ -132,7 +140,7 @@ const Post= memo(({postData}) => {
 
             </View>
 
-            <MediaCarousel mediaData={postData.media}/>
+            <MediaCarousel mediaData={postData.media} isVisible={isVisible}/>
            
             <View style={styles.feedbackIcons}>
                 <View style={styles.feedbackLeft}>
