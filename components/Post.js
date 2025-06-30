@@ -211,7 +211,7 @@ const Post= memo(({postData, isVisible=false}) => {
             onClose={closeCommentsMenu}
             height="90%"
             >
-               <CommentsSection/>
+               <CommentsSection postID={postID} ownerAccountID={ownerAccountID}/>
             </BottomSheet>
         
         </View>

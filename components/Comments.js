@@ -1,19 +1,48 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { Feather } from '@expo/vector-icons';
-import avatar from "../logic/avatar.js";
+import BreakerLine from './BreakerLine.js';
 import Fleet from "./Fleet.js";
+import LiveTimeString from './LiveTimeString.js';
 import VibeText from "./VibeText.js";
 
-function Comments({postUserId, userid, username, avatarName, timestamp, text, numberOfLikes}) {
-    const authorText=()=>{
-        if (userid===postUserId){
+const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
+    const renderReplies = useCallback(() => {
+        return commentData.replies?.map(reply => (
+            <Comments 
+            key={reply.commentID} 
+            commentData={reply} 
+            postID={postID} 
+            ownerAccountID={ownerAccountID}
+            reply={true}
+            />
+        ));
+    }, [commentData, postID, ownerAccountID]);
+
+    const renderReplyCountToggle=useCallback(()=>{
+        if(commentData.replycount-3>0&&!reply){
+            return (
+                <TouchableOpacity>
+                    <View style={styles.replyToggle}>
+                        <BreakerLine width="10%" height={1.3} marginVertical={10}/>
+                        <VibeText weight="SemiBold" style={styles.replyCountText}>
+                        {`View ${commentData.replycount-3} more replies`}
+                        </VibeText>
+                    </View>
+                </TouchableOpacity>
+            );
+        }
+        return null;
+    },[commentData, reply])
+
+    const authorText=useCallback(()=>{
+        if (commentData.commenteraccountid===ownerAccountID){
             return (
                 <>
                     <VibeText weight="ExtraBold" 
                     style={{fontSize: 15, color:"#8A8A8A", marginTop:-5}}>
-                        . {" "}
+                        {" "} . {" "}
                     </VibeText>
                     <VibeText weight="Medium" 
                     style={styles.metaText}>
@@ -23,66 +52,88 @@ function Comments({postUserId, userid, username, avatarName, timestamp, text, nu
             );
         }
         return(null);
-    };
+    },[commentData,ownerAccountID]);
+    const formatLikesCount=useCallback(()=>{
+        const likesCount=commentData.likescount;
+            if (likesCount > 1000){
+                const formattedLikesCount=(Number(likesCount)/1000).toFixed(2);
+                return `${formattedLikesCount}K`;
+            } else{
+                return likesCount;
+            }
+    },[commentData]);
+    
     return (
-        <View style={styles.commentsContainer}>
-            <Fleet
-            size={32}
-            imageUri={avatar[avatarName]}
-            storyAvailable={true}
-            watched={false}
-            watchBorder={false}
-            borderWidth={2}
-            />
-            <View style={styles.content}>
+        <View style={styles.outerContainer}>
 
-                <View style={styles.metaContainer}>
-                    <VibeText weight="Medium" style={[styles.metaText,{color:"#000"}]}>
-                        {username} {" "}
+            <View style={[styles.commentsContainer,
+            {marginHorizontal: reply ? 45 : 15 }]}>
+                <Fleet
+                size={reply ? 26 : 32}
+                imagePath={commentData.fleet.avatarpath}
+                storyAvailable={commentData.fleet.isstoryavailable}
+                watched={commentData.fleet.iswatched}
+                borderWidth={2}
+                borderRatio={2}
+                />
+                <View style={styles.content}>
+
+                    <View style={styles.metaContainer}>
+                        <VibeText weight="Medium" style={[styles.metaText,{color:"#000"}]}>
+                            {commentData.fleet.username} {" "}
+                        </VibeText>
+                        <LiveTimeString timestamp={commentData.createdat} style={styles.metaText}/>
+                        {authorText()}
+                    </View>
+
+                    <View style={styles.textContainer}>
+                        <VibeText weight="Regular" style={styles.commentText}>
+                            {reply && (
+                                <VibeText weight="Regular" style={{fontSize:13, color:"dodgerblue"}}>
+                                    {`@${commentData.parentcommentusername} `}
+                                </VibeText>
+                            )}
+                            {commentData.text}
+                        </VibeText>
+                    </View>
+
+                    <TouchableOpacity>
+                        <VibeText weight="Medium" style={styles.replyText}>
+                            Reply
+                        </VibeText>
+                    </TouchableOpacity>
+
+                </View> 
+                
+                <View style={[styles.feedbackContainer, {marginRight:reply ? -15 : 15}]}>
+                    <TouchableOpacity>
+                        <Feather
+                        name="heart"
+                        size={20}
+                        color={"#8A8A8A"}
+                        />
+                    </TouchableOpacity>
+                    <VibeText weight="Medium" style={styles.metricText}>
+                        {formatLikesCount()}
                     </VibeText>
-                    <VibeText weight="Medium" 
-                    style={styles.metaText}>
-                        {timestamp} {" "}
-                    </VibeText>
-                    {authorText()}
                 </View>
 
-                <View style={styles.textContainer}>
-                    <VibeText weight="Regular" style={styles.commentText}>
-                        {text}
-                    </VibeText>
-                </View>
-
-                <TouchableOpacity>
-                    <VibeText weight="Medium" style={styles.replyText}>
-                        Reply
-                    </VibeText>
-                </TouchableOpacity>
-
-            </View> 
-            
-            <View style={styles.feedbackContainer}>
-                <TouchableOpacity>
-                    <Feather
-                    name="heart"
-                    size={20}
-                    color={"#8A8A8A"}
-                    />
-                </TouchableOpacity>
-                <VibeText weight="Medium" style={styles.metricText}>
-                    {numberOfLikes}
-                </VibeText>
             </View>
-
+            {renderReplies()}
+            {renderReplyCountToggle()}
         </View>
- 
+        
     );
-}
+});
 
 const styles = StyleSheet.create({
+    outerContainer:{
+        flex:1
+    },
     commentsContainer:{
         flex:1,
         flexDirection:"row",
+        marginBottom:20
     },
     content:{
         flex:1,
@@ -109,12 +160,24 @@ const styles = StyleSheet.create({
     },
     feedbackContainer: {
         alignItems:"center",
-        marginTop:15,
-        marginRight:15
+        marginTop:10,
     },
     metricText:{
         fontSize:11,
         color:"#6E6E6E"
+    },
+    replyToggle:{
+        flex:1,
+        flexDirection:"row",
+        marginHorizontal:50,
+        alignItems:"center",
+        marginTop:-10,
+        marginBottom:15
+    }, 
+    replyCountText:{
+        fontSize:12,
+        color:"#6E6E6E", 
+        marginHorizontal:10
     }
 })
 
