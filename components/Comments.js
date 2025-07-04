@@ -1,6 +1,8 @@
-import React, { memo, useCallback } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import * as SecureStore from "expo-secure-store";
+import { memo, useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import api from "@/utils/axios.js";
 import { Feather } from '@expo/vector-icons';
 import BreakerLine from './BreakerLine.js';
 import Fleet from "./Fleet.js";
@@ -8,33 +10,81 @@ import LiveTimeString from './LiveTimeString.js';
 import VibeText from "./VibeText.js";
 
 const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
+    const [replies, setReplies]=useState([]);
+    const [loading, setLoading]=useState(false);
+    const [nextCursor, setNextCursor]=useState(new Date().toISOString());
+    const [hasMore, setHasMore]=useState(true);
+
+    const fetchReplies=useCallback(async ()=>{
+        if (!hasMore) return;
+        setLoading(true);
+
+        try{
+            const accountID=await SecureStore.getItemAsync("accountID");
+            let response;
+            if (replies.length<=3){
+                response=await api.get(`/comment/reply?accountID=${accountID}&mainCommentID=${commentData.maincommentid}
+                    &cursorIndex=${nextCursor}&limit=8`);
+            } else{
+                response=await api.get(`/comment/reply?accountID=${accountID}&mainCommentID=${commentData.maincommentid}
+                    &cursorIndex=${nextCursor}&limit=5`);
+            }
+            
+            console.log("Replies data fetched") //debug
+            const repliesData=response.data.data;
+
+            if(repliesData.length>0){
+                setNextCursor(response.data.nextCursor);
+                setReplies(prev=>{
+                    const existingIds = new Set(prev.map(c => c.commentid));
+                    const newComments = repliesData.filter(c => !existingIds.has(c.commentid));
+                    return [...prev, ...newComments];
+                });
+            } else{
+                console.log("No more replies data available"); //debug
+                setHasMore(false);
+            }
+        } catch (error){
+            if (error.response?.data?.errorMessage){
+                console.log("Error fetching comments data: ",error.response?.data?.errorMessage);
+            } else{
+                console.log("Unknown or network error",error.message);
+            }
+        } finally{
+            setLoading(false);
+        }
+
+    }, [nextCursor, hasMore]);
+
     const renderReplies = useCallback(() => {
-        return commentData.replies?.map(reply => (
+        if (reply)  return;
+        return replies.map(r => (
             <Comments 
-            key={reply.commentID} 
-            commentData={reply} 
+            key={r.commentID} 
+            commentData={r} 
             postID={postID} 
             ownerAccountID={ownerAccountID}
             reply={true}
             />
         ));
-    }, [commentData, postID, ownerAccountID]);
+    }, [replies, postID, ownerAccountID]);
 
     const renderReplyCountToggle=useCallback(()=>{
-        if(commentData.replycount-3>0&&!reply){
+        const moreRepliesCount=commentData.replycount-replies.length;
+        if(moreRepliesCount>0&&!reply){
             return (
-                <TouchableOpacity>
+                <TouchableOpacity onPress={fetchReplies}>
                     <View style={styles.replyToggle}>
                         <BreakerLine width="10%" height={1.3} marginVertical={10}/>
                         <VibeText weight="SemiBold" style={styles.replyCountText}>
-                        {`View ${commentData.replycount-3} more replies`}
+                        {`View ${moreRepliesCount} more replies`}
                         </VibeText>
                     </View>
                 </TouchableOpacity>
             );
         }
         return null;
-    },[commentData, reply])
+    },[commentData, reply, replies])
 
     const authorText=useCallback(()=>{
         if (commentData.commenteraccountid===ownerAccountID){
@@ -62,6 +112,12 @@ const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
                 return likesCount;
             }
     },[commentData]);
+
+    useEffect(() => {
+        if (!reply && replies.length === 0 && commentData.replies?.length > 0) {
+            setReplies(commentData.replies);
+        }
+    }, [commentData, reply]);
     
     return (
         <View style={styles.outerContainer}>
@@ -120,7 +176,8 @@ const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
 
             </View>
             {renderReplies()}
-            {renderReplyCountToggle()}
+            {!reply&&renderReplyCountToggle()}
+            {loading && <ActivityIndicator size="small" color="#000"/>}
         </View>
         
     );

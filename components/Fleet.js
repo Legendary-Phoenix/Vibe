@@ -1,8 +1,8 @@
 import api from "@/utils/axios.js";
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 
-function Fleet({size, imagePath, storyAvailable, watched, borderWidth=2, borderRatio=8}) {
+function Fleet({size, storyData=null, imagePath, storyAvailable, watched, borderWidth=2, borderRatio=8}) {
     const [watchStatus, setWatchStatus]=useState(watched);
     const [publicUrl, setPublicUrl]=useState("");
 
@@ -17,10 +17,7 @@ function Fleet({size, imagePath, storyAvailable, watched, borderWidth=2, borderR
     };
 
     useEffect(()=>{
-        const init=async()=>{
-            await fetchPublicUrl();
-        };
-        init();
+        fetchPublicUrl();
     },[]);
 
     const updateWatchStatus = () => {
@@ -60,4 +57,4 @@ function Fleet({size, imagePath, storyAvailable, watched, borderWidth=2, borderR
     );
 }
 
-export default Fleet;
+export default memo(Fleet);

@@ -1,5 +1,5 @@
 import * as SecureStore from "expo-secure-store";
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 import api from '@/utils/axios.js';
@@ -7,7 +7,7 @@ import BreakerLine from './BreakerLine.js';
 import Comments from "./Comments.js";
 import VibeText from "./VibeText.js";
 
-function CommentsSection({postID,ownerAccountID}) {
+function CommentsSection ({postID,ownerAccountID}) {
     const [comment, setComment]=useState([]);
     const [loading, setLoading]=useState(false);
     const [nextCursor, setNextCursor]=useState(new Date().toISOString());
@@ -129,4 +129,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default CommentsSection;
+export default memo(CommentsSection);

@@ -74,7 +74,7 @@ function HomeScreen() {
     //what counts as visible
     const viewabilityConfig={
         itemVisiblePercentThreshold:50,
-        minimumViewTime: 100 //100ms
+        minimumViewTime: 50 //50ms
     };
 
     //onEndReached with proper momentum handling
@@ -163,7 +163,7 @@ function HomeScreen() {
             //subject to change-performance optimization
             initialNumToRender={3}
             maxToRenderPerBatch={5} 
-            updateCellsBatchingPeriod={50} 
+            //updateCellsBatchingPeriod={50} 
             windowSize={10}
             removeClippedSubviews={true}
 

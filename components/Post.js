@@ -75,16 +75,12 @@ const Post= memo(({postData, isVisible=false}) => {
                             }}>
                                 {postData.username} {" "}
                             </VibeText>
-                            <VibeText weight="ExtraBold" style={{
+                            {/* <VibeText weight="ExtraBold" style={{
                                 color: themeColor,
                                 marginTop: -3
                             }}>
                                     . {" "}
-                            </VibeText>
-                            <LiveTimeString timestamp={postData.createdat} style={{
-                                fontSize:13,
-                                color: themeColor
-                            }}/>
+                            </VibeText> */}
 
                         </View>
                         
@@ -197,6 +193,11 @@ const Post= memo(({postData, isVisible=false}) => {
                 <VibeText linesNumber={2} expand={true} style={styles.descriptionText}>
                    {postData.description}
                 </VibeText>
+                <LiveTimeString timestamp={postData.createdat} style={{
+                    fontSize:12,
+                    color: "#6E6E6E",
+                    marginTop:5
+                }}/>
             </View>
             <BottomSheet
             isVisible={postMenuVisible}
@@ -221,7 +222,7 @@ const Post= memo(({postData, isVisible=false}) => {
 const styles = StyleSheet.create({
     postContainer:{
         flex:1,
-        marginVertical:20
+        marginVertical:15
     },
     header:{
         marginHorizontal:15,

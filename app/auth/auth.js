@@ -21,7 +21,7 @@ function AuthScreen(props) {
 
     const authButtonText=signUp ? "Register" : "Log In";
     const authLabel= signUp ? "Already have an account?" : "Don't have an account?";
-    const authOptionText=signUp ? "Sign up here" : "Log in here";
+    const authOptionText=signUp ? "Log in here" : "Sign up here";
 
     const renderForgetPassword=()=>{
         if (signUp){

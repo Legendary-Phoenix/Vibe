@@ -3,7 +3,7 @@ import { Animated, Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import MediaItem from './MediaItem';
 const { width } = Dimensions.get('window');
 
-const MediaCarousel=memo(({ mediaData, isVisible=false })=> {
+function MediaCarousel ({ mediaData, isVisible=false }) {
   const scrollX = useRef(new Animated.Value(0)).current;
   const [currentIndex, setCurrentIndex]=useState(0);
 
@@ -26,17 +26,12 @@ const MediaCarousel=memo(({ mediaData, isVisible=false })=> {
       mediaType={item.mediaType} 
       renderAspectRatio={item.renderAspectRatio}
       cropOption={item.cropOption}
-      isVisible={isVisible&&index===currentIndex}
+      isVisible={isVisible}
+      isFocused={index===currentIndex}
     />
   ), [isVisible,currentIndex]);
 
   const keyExtractor=useCallback((_,index)=>index.toString(),[]);
-
-  const getItemLayout=useCallback((data,index)=>({
-    length:width,
-    offset:width*index,
-    index,
-  }),[]);
     
   return (
     <View style={
@@ -54,10 +49,9 @@ const MediaCarousel=memo(({ mediaData, isVisible=false })=> {
 
         renderItem={renderMediaItem}
         onScroll={onScroll}
-        getItemLayout={getItemLayout}
         //to change
-        initialNumToRender={1}
-        maxToRenderPerBatch={1}
+        initialNumToRender={2}
+        maxToRenderPerBatch={2}
         windowSize={3}
         removeClippedSubviews={true}
         scrollEventThrottle={16}
@@ -88,7 +82,7 @@ const MediaCarousel=memo(({ mediaData, isVisible=false })=> {
       )}
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
     pagination: {
@@ -107,4 +101,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MediaCarousel;
+export default memo(MediaCarousel);

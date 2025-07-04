@@ -4,7 +4,7 @@ import { Dimensions, Image, StyleSheet, View } from "react-native";
 import VideoPlayer from "./VideoPlayer.js";
 const { width } = Dimensions.get('window');
 
-const MediaItem=memo(({mediaPath,mediaType, renderAspectRatio,cropOption, isVisible=false})=> {
+function MediaItem ({mediaPath,mediaType, renderAspectRatio,cropOption, isVisible=false, isFocused}) {
     const [publicUrl,setPublicUrl]=useState("");
     const [loading,setLoading]=useState(false);
     const cropType=cropOption==="Fit" ? "contain" : "cover";
@@ -22,7 +22,7 @@ const MediaItem=memo(({mediaPath,mediaType, renderAspectRatio,cropOption, isVisi
         } finally{
             setLoading(false);
         }
-    });
+    },[loading, publicUrl, isVisible, mediaPath]);
 
     const getRelativeHeight=useCallback(()=>{
         if (renderAspectRatio==="1:1"){
@@ -66,15 +66,16 @@ const MediaItem=memo(({mediaPath,mediaType, renderAspectRatio,cropOption, isVisi
     );
 
     return (
-       <>
-        {mediaType==="Image" ? renderImage() : renderVideo()}
-       </>
+       <View>
+           {mediaType==="Image" ? renderImage() : renderVideo()}
+       </View>
     );
-});
+};
+
 const styles = StyleSheet.create({
     imageContainer:{
         width:"100%",
         backgroundColor:"#000",
   },
 })
-export default MediaItem;
+export default memo(MediaItem);
