@@ -2,7 +2,7 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 
-const {width}=Dimensions.get("window");
+const {width,height}=Dimensions.get("window");
 
 function VideoPlayer({source,videoWidth=width,videoHeight=width,contentFit="cover", isVisible=true}) {
     const [playerInitialized, setPlayerInitialized]=useState(false);
@@ -49,7 +49,7 @@ function VideoPlayer({source,videoWidth=width,videoHeight=width,contentFit="cove
 const styles = StyleSheet.create({
     container:{
         width:"100%",
-        backgroundColor:"#000"
+        backgroundColor:"#000",
     },
 })
 

@@ -1,12 +1,12 @@
-import { memo, useCallback, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import MediaItem from './MediaItem';
 const { width } = Dimensions.get('window');
 
-function MediaCarousel ({ mediaData, isVisible=false }) {
+function MediaCarousel ({ mediaData, isVisible=false, setAudioMeta }) {
   const scrollX = useRef(new Animated.Value(0)).current;
   const [currentIndex, setCurrentIndex]=useState(0);
-
+  
   const onScroll=useCallback(
     Animated.event(
       [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -32,6 +32,14 @@ function MediaCarousel ({ mediaData, isVisible=false }) {
   ), [isVisible,currentIndex]);
 
   const keyExtractor=useCallback((_,index)=>index.toString(),[]);
+
+  useEffect(()=>{
+    if (mediaData[0].mediaType==="Video"){
+      const trackName=mediaData[0].trackName;
+      const artistName=mediaData[0].artistName;
+      setAudioMeta(trackName, artistName);
+    }
+  },[]);
     
   return (
     <View style={

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { Snackbar } from 'react-native-paper';
 
 import { Ionicons } from '@expo/vector-icons';
 import SafeView from '../../components/SafeView.js';
@@ -17,11 +18,24 @@ function AuthScreen(props) {
     const [email, setEmail]=useState("");
     const [loading,setLoading]=useState(false);
     const [signUp, setAuthType]=useState(true);
+    const [snackBarVisible, setSnackBarVisible]=useState(false);
+    const [snackBarMessage, setSnackBarMessage]=useState("");
     const router=useRouter();
 
     const authButtonText=signUp ? "Register" : "Log In";
     const authLabel= signUp ? "Already have an account?" : "Don't have an account?";
     const authOptionText=signUp ? "Log in here" : "Sign up here";
+
+    const showSnackBar=(message)=>{
+        setSnackBarMessage(message);
+        setSnackBarVisible(true);
+    }
+
+    const changeAuthType=()=>{
+        setEmail("");
+        setPassword("");
+        setAuthType(prev => !prev);
+    }
 
     const renderForgetPassword=()=>{
         if (signUp){
@@ -43,7 +57,8 @@ function AuthScreen(props) {
             const {error}=await supabase.auth.signUp({email,password});
             setLoading(false);
             if (error){
-                Alert.alert("Sign Up Error:",error.message);
+                showSnackBar(`Sign Up Error: ${error.message}`);
+                //Alert.alert("Sign Up Error:",error.message);
                 return;
             }
             router.push({
@@ -63,7 +78,8 @@ function AuthScreen(props) {
                     });
                     return;
                 }
-                Alert.alert("Sign In Error:",error.message);
+                showSnackBar(`Sign In Error: ${error.message}`);
+                //Alert.alert("Sign In Error:",error.message);
                 return;
             }
         }
@@ -71,77 +87,97 @@ function AuthScreen(props) {
 
     return (
         <SafeView>
-            <View style={styles.container}>
-                <Image
-                source={require("../../assets/images/auth-screen-image.jpg")}
-                style={styles.authImage}
-                />
-                <Image
-                source={require("../../assets/images/vibe.png")}
-                style={styles.vibeImage}
-                />
-                <TextInput
-                style={[styles.input,
-                    {
-                        borderWidth: isEmailInputFocus ? 2 : 0.6,
-                    }]}
-                placeholder="Email Address"
-                placeholderTextColor="#aaa"
-                onFocus={()=>setEmailInputFocused(true)}
-                onBlur={()=>setEmailInputFocused(false)}
-                value={email}
-                onChangeText={setEmail}
-                />
-                <View>
-                    <TextInput
-                    style={[styles.input,
-                        {
-                            borderWidth: isPasswordInputFocus ? 2 : 0.6,
-                        }]}
-                    placeholder="Password"
-                    placeholderTextColor="#aaa"
-                    secureTextEntry={!passwordVisible}
-                    onFocus={()=>setPasswordInputFocused(true)}
-                    onBlur={()=>setPasswordInputFocused(false)}
-                    value={password}
-                    onChangeText={setPassword}
-                    />
-                    <TouchableOpacity 
-                    style={styles.visibleIcon}
-                    onPress={()=>setPasswordVisible(prev=>!prev)}
-                    >
-                        <Ionicons
-                        name={passwordVisible ? "eye-outline" : "eye-off-outline"}
-                        size={20}
-                        color={passwordVisible ? "#000" : "gray"}
-                        />
-                    </TouchableOpacity>
-                </View>
-                {renderForgetPassword()}
-                <TouchableOpacity 
-                style={styles.authButton}
-                onPress={handleAuth}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
+                <ScrollView
+                contentContainerStyle={styles.scrollContainer}
+                keyboardShouldPersistTaps="handled"
                 >
-                    <VibeText weight="SemiBold" style={{color:"#fff",alignSelf:"center", fontSize:13}}>
-                        {authButtonText}
-                    </VibeText>
-                </TouchableOpacity>
-                <View style={styles.authOption}>
-                    <VibeText weight="Medium" style={{fontSize:12.5}}>
-                        {authLabel} {" "}
-                    </VibeText>
-                    <TouchableOpacity 
-                    onPress={()=>{
-                    setAuthType(prev => !prev);
-                    }}
-                    >
-                        <VibeText weight="Medium" style={{fontSize:12.5, color:"dodgerblue"}}>
-                            {authOptionText}
-                        </VibeText>
-                    </TouchableOpacity>
-                </View>
-                {loading && <ActivityIndicator size="large" style={{marginTop:30}}/>}
-            </View>
+
+                    <View style={styles.container}>
+                        <Image
+                        source={require("../../assets/images/auth-screen-image.jpg")}
+                        style={styles.authImage}
+                        />
+                        <Image
+                        source={require("../../assets/images/vibe.png")}
+                        style={styles.vibeImage}
+                        />
+                        <TextInput
+                        style={[styles.input,
+                            {
+                                borderWidth: isEmailInputFocus ? 2 : 0.6,
+                            }]}
+                        placeholder="Email Address"
+                        placeholderTextColor="#aaa"
+                        onFocus={()=>setEmailInputFocused(true)}
+                        onBlur={()=>setEmailInputFocused(false)}
+                        value={email}
+                        onChangeText={setEmail}
+                        />
+                        <View>
+                            <TextInput
+                            style={[styles.input,
+                                {
+                                    borderWidth: isPasswordInputFocus ? 2 : 0.6,
+                                }]}
+                            placeholder="Password"
+                            placeholderTextColor="#aaa"
+                            secureTextEntry={!passwordVisible}
+                            onFocus={()=>setPasswordInputFocused(true)}
+                            onBlur={()=>setPasswordInputFocused(false)}
+                            value={password}
+                            onChangeText={setPassword}
+                            />
+                            <TouchableOpacity 
+                            style={styles.visibleIcon}
+                            onPress={()=>setPasswordVisible(prev=>!prev)}
+                            >
+                                <Ionicons
+                                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                                size={20}
+                                color={passwordVisible ? "#000" : "gray"}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                        {renderForgetPassword()}
+                        <TouchableOpacity 
+                        style={styles.authButton}
+                        onPress={handleAuth}
+                        >
+                            <VibeText weight="SemiBold" style={{color:"#fff",alignSelf:"center", fontSize:13}}>
+                                {authButtonText}
+                            </VibeText>
+                        </TouchableOpacity>
+                        <View style={styles.authOption}>
+                            <VibeText weight="Medium" style={{fontSize:12.5}}>
+                                {authLabel} {" "}
+                            </VibeText>
+                            <TouchableOpacity 
+                            onPress={()=>{
+                            changeAuthType();
+                            }}
+                            >
+                                <VibeText weight="Medium" style={{fontSize:12.5, color:"dodgerblue"}}>
+                                    {authOptionText}
+                                </VibeText>
+                            </TouchableOpacity>
+                        </View>
+                        {loading && <ActivityIndicator size="large" style={{marginTop:30}}/>}
+                        <View style={{ height: 60 }} />
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+            <Snackbar
+                visible={snackBarVisible}
+                onDismiss={() => setSnackBarVisible(false)}
+                duration={2000}
+                style={{backgroundColor: "red"}}
+            >
+                {snackBarMessage}
+            </Snackbar>
         </SafeView>
     );
 }
@@ -197,6 +233,5 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         justifyContent:"center"
     },
-
 })
 export default AuthScreen;

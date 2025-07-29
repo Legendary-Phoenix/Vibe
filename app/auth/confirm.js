@@ -2,13 +2,23 @@ import SafeView from "@/components/SafeView";
 import VibeText from "@/components/VibeText";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Snackbar } from 'react-native-paper';
 
 import { supabase } from "../../utils/supabase-public.js";
 
 function ConfirmationScreen() {
     const router=useRouter();
     const {email="user20@example.com"}=useLocalSearchParams();
+    const [snackBarVisible, setSnackBarVisible]=useState(false);
+    const [snackBarMessage, setSnackBarMessage]=useState("");
+    const [snackBarColor, setSnackBarColor]=useState("red");
+
+    const showSnackBar=(message,color="red")=>{
+        setSnackBarMessage(message);
+        setSnackBarVisible(true);
+        setSnackBarColor(color);
+    }
 
     const resendEmail=async ()=>{
         const {error}=await supabase.auth.resend({
@@ -16,10 +26,10 @@ function ConfirmationScreen() {
             email
         });
         if (error){
-            Alert.alert("Failed to resend email. Error:",error)
+            showSnackBar(`Failed to resend email.`);
             return;
         }
-        Alert.alert("Confirmation email sent!\nPlease check your inbox")
+        showSnackBar(`Confirmation email sent.`,"green");
     }
     
     return (
@@ -63,7 +73,14 @@ function ConfirmationScreen() {
                         </VibeText>
                     </TouchableOpacity>
                 </View>
-
+                <Snackbar
+                    visible={snackBarVisible}
+                    onDismiss={() => setSnackBarVisible(false)}
+                    duration={2000}
+                    style={{backgroundColor: snackBarColor}}
+                >
+                    {snackBarMessage}
+                </Snackbar>
             </View>
         </SafeView>
     );

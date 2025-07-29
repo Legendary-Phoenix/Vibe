@@ -129,7 +129,6 @@ function PostMenu(props) {
     },
     bottomSheetBody:{
         marginHorizontal:20,
-        justifyContent:"center"
     },
     bottomSheetOptions:{
         flexDirection:"row",

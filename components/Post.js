@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { memo, useCallback, useMemo, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -16,6 +17,13 @@ const Post= memo(({postData, isVisible=false}) => {
     const ownerAccountID=postData.owneraccountid;
     const [postMenuVisible,setPostMenuVisible]=useState(false);
     const [commentsMenuVisible, setCommentsMenuVisible]=useState(false);
+    const [trackName, setTrackName]=useState("");
+    const [artistName, setArtistName]=useState("");
+    const [like, setLike]=useState(false);
+    const [bookmark, setBookmark]=useState(postData.isbookmarked);
+    const [follow, setFollow]=useState(postData.isfollowing);
+    const [likesCount, setLikesCount]=useState(postData.likescount);
+    const router=useRouter();
 
     const openPostMenu= useCallback(()=>setPostMenuVisible(true),[]);
     const closePostMenu= useCallback(()=>setPostMenuVisible(false),[]);
@@ -27,23 +35,92 @@ const Post= memo(({postData, isVisible=false}) => {
     const borderColor=useMemo(()=>postData.media[0].renderAspectRatio==="4.5" ? "#fff" : "#EBEBEB",[postData.media]);
     const backgroundColor=useMemo(()=>postData.media[0].renderAspectRatio==="4:5" ? null : "#EBEBEB",[postData.media]);
 
+    // const navigateToProfilePage=()=>{
+    //     console.log("postData.username:", postData.username);
+    //     router.push({
+    //         pathname:"/profile",
+    //         params:{
+    //             imagePath: postData.fleet.avatarpath,
+    //             storyAvailable: postData.fleet.isstoryavailable,
+    //             watched: postData.fleet.iswatched,
+    //             username: postData.username,
+    //             displayName: "Pam Zieme"
+    //         },
+    //     });
+    // };
+
+    const setAudioMeta=(trackName, artistName)=>{
+        setTrackName(trackName);
+        setArtistName(artistName);
+    };
+    const handleLike=()=>{
+        setLike(prev=>!prev);
+        if (!like){
+            setLikesCount(prev=>prev+1);
+        } else{
+            setLikesCount(prev=>prev-1);
+        }
+    }
+    
     const renderFollowButton=useCallback(()=>{
+        //uses postData.isfollowing instead of follow as to allow the follow button to
+        //avoid it from dissapearing after clicking it and changing its text to "Following"
         if (!postData.isfollowing){
             return(
                 <TouchableOpacity 
+                onPress={()=>setFollow(prev=>!prev)}
                 style={[styles.followButton,
                 {
+                    width:follow?80:70,
                     borderColor, 
                     backgroundColor,
                 }]}>
-                    <VibeText weight="SemiBold" style={[styles.followText,{color:themeColor}]}>Follow</VibeText>
+                    <VibeText weight="SemiBold" style={[styles.followText,{color:themeColor}]}>{follow?"Following":"Follow"}</VibeText>
                 </TouchableOpacity>
             );
         }
         return null;
-    },[postData.isfollowing, borderColor, backgroundColor, themeColor]);
+    },[postData.isfollowing, follow, borderColor, backgroundColor, themeColor]);
 
-    
+    const renderAudioMeta=useCallback(()=>{
+        if (!trackName && !artistName) return null;
+        return(
+            <View style={styles.audioMeta}>
+                <TouchableOpacity style={styles.audioTextContainer}>
+                    <FontAwesome5
+                    name="music"
+                    size={12}
+                    color={themeColor}
+                    />
+                    <VibeText weight="Medium"  linesNumber={1} style={[{
+                    fontSize:11.5,
+                    alignSelf:"center",
+                    color: themeColor,
+                    marginLeft:7,
+                    }]}>
+                        {trackName} {" "}
+                        <VibeText weight="ExtraBold" 
+                        style={{
+                            top:-3,
+                            color: themeColor,
+                        }}
+                        >
+                            . {" "} {artistName}
+                        </VibeText>
+                        
+                    </VibeText>
+                    {/* <VibeText weight="Medium" linesNumber={1} style={{
+                    fontSize:11.5,
+                    alignSelf:"center",
+                    color: themeColor,
+                    }}>
+                    {artistName}
+                    </VibeText> */}
+                </TouchableOpacity>
+            </View>
+        );
+    },[trackName, artistName]);
+
     const formatMetrics=useCallback((metric)=>{
         if (metric > 1000){
             const formattedMetric=(Number(metric)/1000).toFixed(2);
@@ -67,57 +144,21 @@ const Post= memo(({postData, isVisible=false}) => {
 
                     <View style={styles.postMeta}>
                         
-                        <View style={styles.topMeta}>
-
-                            <VibeText weight="SemiBold" style={{
-                                fontSize:13,
-                                color: themeColor
-                            }}>
-                                {postData.username} {" "}
-                            </VibeText>
-                            {/* <VibeText weight="ExtraBold" style={{
-                                color: themeColor,
-                                marginTop: -3
-                            }}>
-                                    . {" "}
-                            </VibeText> */}
-
-                        </View>
-                        
-
-                        <View style={styles.audioMeta}>
-                            <FontAwesome5
-                            name="music"
-                            size={12}
-                            color={themeColor}
-                            />
-                            <TouchableOpacity style={styles.audioTextContainer}>
-                                <VibeText weight="Medium" style={[{
-                                fontSize:11.5,
-                                alignSelf:"center",
-                                color: themeColor,
-                                marginLeft:7
-                                }]}>
-                                    Indila {" "}
-                                </VibeText>
-                                <VibeText weight="ExtraBold" 
-                                style={{
-                                    top:-3,
+                        <View style={[styles.topMeta,{marginTop: !trackName&&!artistName ? -10 : -5}]}>
+                            <TouchableOpacity
+                            // onPress={navigateToProfilePage}
+                            >
+                                <VibeText weight="SemiBold" style={{
+                                    fontSize:13,
                                     color: themeColor,
-                                }}
-                                >
-                                    . {" "}
-                                </VibeText>
-                                <VibeText weight="Medium" style={{
-                                fontSize:11.5,
-                                alignSelf:"center",
-                                color: themeColor,
+                                    alignSelf:"center"
                                 }}>
-                                Love Story
-                                </VibeText>
+                                    {postData.username} {" "}
+                                </VibeText> 
                             </TouchableOpacity>
-                        </View>
 
+                        </View>
+                        {renderAudioMeta()}
                     </View>
 
                     <View style={styles.headerButtons}>
@@ -136,20 +177,29 @@ const Post= memo(({postData, isVisible=false}) => {
 
             </View>
 
-            <MediaCarousel mediaData={postData.media} isVisible={isVisible}/>
+            <MediaCarousel mediaData={postData.media} isVisible={isVisible} setAudioMeta={setAudioMeta}/>
            
             <View style={styles.feedbackIcons}>
                 <View style={styles.feedbackLeft}>
 
                     <View style={styles.iconContainer}>
-                        <TouchableOpacity>
-                            <Feather
-                            name="heart"
-                            size={25}
-                            color={"#000"}
-                            />
+                        <TouchableOpacity onPress={handleLike}>
+                            {like ? (
+                                <FontAwesome
+                                name="heart"
+                                size={25}
+                                color="red"
+                                />
+                            ) : (
+                                <Feather
+                                name="heart"
+                                size={25}
+                                color="#000"
+                                />
+
+                            )}
                         </TouchableOpacity>
-                        <VibeText weight="SemiBold" style={styles.metricText}>{formatMetrics(postData.likescount)}</VibeText>
+                        <VibeText weight="SemiBold" style={styles.metricText}>{formatMetrics(likesCount)}</VibeText>
                     </View>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={openCommentsMenu}>
@@ -175,9 +225,9 @@ const Post= memo(({postData, isVisible=false}) => {
                 </View>
 
                 <View style={styles.feedbackRight}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>setBookmark(prev=>!prev)}>
                         <FontAwesome
-                        name={postData.isbookmarked ? "bookmark" : "bookmark-o"}
+                        name={bookmark ? "bookmark" : "bookmark-o"}
                         size={25}
                         color={"#000"}
                         />
@@ -202,7 +252,7 @@ const Post= memo(({postData, isVisible=false}) => {
             <BottomSheet
             isVisible={postMenuVisible}
             onClose={closePostMenu}
-            height="40%"
+            height="50%"
             >
                 <PostMenu/>
             </BottomSheet>
@@ -210,7 +260,7 @@ const Post= memo(({postData, isVisible=false}) => {
             <BottomSheet
             isVisible={commentsMenuVisible}
             onClose={closeCommentsMenu}
-            height="90%"
+            height="99%"
             >
                <CommentsSection postID={postID} ownerAccountID={ownerAccountID}/>
             </BottomSheet>
@@ -229,6 +279,7 @@ const styles = StyleSheet.create({
         marginVertical:5,
         flexDirection:"row",
         zIndex:3,
+        alignItems:"center"
         //justifyContent:"space-between"
     },
     headerSection:{
@@ -245,24 +296,24 @@ const styles = StyleSheet.create({
     topMeta:{
         flexDirection:"row",
         alignItems:"center",
-        marginTop:2
     },
     audioMeta:{
         flexDirection:"row",
         alignItems:"center",
+        maxWidth: 150,
+        marginLeft:2,
         marginTop:-2
     },
     audioTextContainer:{
         alignItems:"center",
         justifyContent:"center",
-        flexDirection:"row"
+        flexDirection:"row",
     },
     headerButtons:{
         flexDirection:"row",
         alignItems:"center",
     },
     followButton:{
-        width:70,
         height:30,
         borderRadius:5,
         padding:4,

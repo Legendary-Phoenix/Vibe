@@ -20,7 +20,7 @@ function VibeText({children,weight="Regular", family="Inter", expand=false,
             style,
         ]}
         numberOfLines={expandState ? undefined : linesNumber}
-        ellipsizeMode='tail'
+        ellipsizeMode={"tail"}
         onPress={expand ? toggleExpand : null}
         {...props}
         >

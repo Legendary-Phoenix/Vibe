@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import api from "@/utils/axios.js";
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import BreakerLine from './BreakerLine.js';
 import Fleet from "./Fleet.js";
 import LiveTimeString from './LiveTimeString.js';
@@ -14,6 +14,17 @@ const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
     const [loading, setLoading]=useState(false);
     const [nextCursor, setNextCursor]=useState(new Date().toISOString());
     const [hasMore, setHasMore]=useState(true);
+    const [like, setLike]=useState(false);
+    const [likesCount, setLikesCount]=useState(commentData.likescount);
+
+    const handleLike=()=>{
+        setLike(prev=>!prev);
+        if (!like){
+            setLikesCount(prev=>prev+1);
+        } else{
+            setLikesCount(prev=>prev-1);
+        }
+    }
 
     const fetchReplies=useCallback(async ()=>{
         if (!hasMore) return;
@@ -103,15 +114,15 @@ const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
         }
         return(null);
     },[commentData,ownerAccountID]);
+
     const formatLikesCount=useCallback(()=>{
-        const likesCount=commentData.likescount;
             if (likesCount > 1000){
                 const formattedLikesCount=(Number(likesCount)/1000).toFixed(2);
                 return `${formattedLikesCount}K`;
             } else{
                 return likesCount;
             }
-    },[commentData]);
+    },[likesCount]);
 
     useEffect(() => {
         if (!reply && replies.length === 0 && commentData.replies?.length > 0) {
@@ -162,12 +173,21 @@ const Comments=memo(({commentData, postID, ownerAccountID, reply=false})=> {
                 </View> 
                 
                 <View style={[styles.feedbackContainer, {marginRight:reply ? -15 : 15}]}>
-                    <TouchableOpacity>
-                        <Feather
-                        name="heart"
-                        size={20}
-                        color={"#8A8A8A"}
-                        />
+                    <TouchableOpacity onPress={handleLike}>
+                        {like ? (
+                            <FontAwesome
+                            name="heart"
+                            size={20}
+                            color="red"
+                            />
+                        ) : (
+                            <Feather
+                            name="heart"
+                            size={20}
+                            color="#8A8A8A"
+                            />
+
+                        )}
                     </TouchableOpacity>
                     <VibeText weight="Medium" style={styles.metricText}>
                         {formatLikesCount()}

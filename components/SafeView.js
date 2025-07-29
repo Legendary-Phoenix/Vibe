@@ -8,8 +8,6 @@ const SafeView = ({children}) => {
     <View style={{
       paddingTop: insets.top,
       backgroundColor:"#fff",
-      //paddingLeft: insets.left,
-      //paddingRight: insets.right,
       flex: 1,
     }}>
       {children}
