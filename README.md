@@ -4,7 +4,7 @@
 
 ---
 
-## 📱 APK Download
+## ⬇️ APK Download
 
 Vibe is available as an installable Android application.
 
@@ -29,7 +29,7 @@ This project reflects production-grade practices in terms of **UI**, **performan
 
 ---
 
-## 📂 Tech Stack
+## ⚙️ Tech Stack
 
 | Layer             | Technology Used                                         |
 | ----------------- | ------------------------------------------------------- |
