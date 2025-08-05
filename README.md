@@ -4,11 +4,11 @@
 
 ---
 
-## ⬇️ APK Download
+## 🔗 APK Download
 
 Vibe is available as an installable Android application.
 
-📦 [**Download Vibe APK**](https://github.com/Legendary-Phoenix/Vibe/releases/download/v1.0.0/Vibe.v.1.0.0.apk)
+[**Download Vibe APK**](https://github.com/Legendary-Phoenix/Vibe/releases/download/v1.0.0/Vibe.v.1.0.0.apk)
 
 ✅ Works on Android devices and Android Emulators.  
 ❌ Currently not supported on iOS.
