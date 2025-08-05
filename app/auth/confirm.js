@@ -2,6 +2,7 @@ import SafeView from "@/components/SafeView";
 import VibeText from "@/components/VibeText";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Snackbar } from 'react-native-paper';
 
@@ -47,7 +48,7 @@ function ConfirmationScreen() {
                 </TouchableOpacity>
                 <View style={styles.body}>
                     <Image
-                    source={require("../../assets/images/email-confirmation-screen-image.png")}
+                    source={require("../../assets/images/email_confirmation_screen_image.jpg")}
                     style={styles.confirmImage}
                     />
                     <VibeText weight="SemiBold" style={styles.headerText}>

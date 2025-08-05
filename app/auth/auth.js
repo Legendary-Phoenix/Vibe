@@ -98,7 +98,7 @@ function AuthScreen(props) {
 
                     <View style={styles.container}>
                         <Image
-                        source={require("../../assets/images/auth-screen-image.jpg")}
+                        source={require("../../assets/images/auth_screen_image.jpg")}
                         style={styles.authImage}
                         />
                         <Image

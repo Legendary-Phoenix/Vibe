@@ -46,7 +46,7 @@ function ForgotPassword(props) {
                 </TouchableOpacity>
                 
                 <Image
-                source={require("@/assets/images/reset-password-screen-image.png")}
+                source={require("../../assets/images/email_confirmation_screen_image.jpg")}
                 style={styles.resetPasswordImage}
                 />
                 <VibeText weight="SemiBold" style={styles.headerText}>
