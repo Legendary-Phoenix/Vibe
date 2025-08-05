@@ -1,4 +1,4 @@
-<p align="center">
+<p align="left">
   <img src="assets/images/vibe.png" alt="Vibe Logo" width="150"/>
 </p>
 
