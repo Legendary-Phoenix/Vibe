@@ -1,4 +1,8 @@
-# 📱 Vibe
+<p align="center">
+  <img src="assets/vibe-logo.png" alt="Vibe Logo" width="150"/>
+</p>
+
+<h1 align="center">Vibe</h1>
 
 **Vibe** is a full-stack social media application inspired by Instagram, personally developed from scratch. It combines the power of **React Native**, **Express**, **Supabase**, and **PostgreSQL** to deliver a professional-grade mobile app experience. This was a solo project built over **90 days**, from **May 1st to July 29th, 2025**, balancing full-time university commitments alongside development.
 
