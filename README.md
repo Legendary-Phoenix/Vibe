@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/vibe-logo.png" alt="Vibe Logo" width="150"/>
+  <img src="assets/images/vibe-logo.png" alt="Vibe Logo" width="150"/>
 </p>
 
 <h1 align="center">Vibe</h1>
