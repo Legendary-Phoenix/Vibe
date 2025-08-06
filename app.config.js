@@ -1,0 +1,58 @@
+import 'dotenv/config';
+
+export default {
+  expo: {
+    name: "Vibe",
+    slug: "Vibe",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/images/vibe_logo.png",
+    scheme: "vibe",
+    userInterfaceStyle: "automatic",
+    newArchEnabled: true,
+    ios: {
+      supportsTablet: true
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/images/vibe_logo.png",
+        backgroundColor: "#ffffff"
+      },
+      edgeToEdgeEnabled: true,
+      package: "com.legendaryphoenix.Vibe"
+    },
+    web: {
+      bundler: "metro",
+      output: "static",
+      favicon: "./assets/images/vibe_logo.png"
+    },
+    plugins: [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          image: "./assets/images/vibe_logo.png",
+          imageWidth: 200,
+          resizeMode: "contain",
+          backgroundColor: "#ffffff"
+        }
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-video",
+      "expo-web-browser"
+    ],
+    experiments: {
+      typedRoutes: true
+    },
+    extra: {
+      router: {},
+      eas: {
+        projectId: "852a502b-eb95-483b-82b0-4b49d7c717ef"
+      },
+      supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
+      supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+    },
+    owner: "legendary-phoenix"
+  }
+};

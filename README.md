@@ -15,6 +15,19 @@ Vibe is available as an installable Android application.
 
 ---
 
+## 🧪 Test Accounts
+
+To help you explore the app without needing to register a new account, you can use any of the following **pre-created test accounts**:
+
+- **Emails:** `user1@example.com` to `user20@example.com`
+- **Password:** `Password123`
+
+Each account has been seeded with its **own data** (e.g., posts, reels), so you can experience the app as an active user.
+
+> ⚠️ Creating a new account is supported, but new accounts will **not have any existing posts, reels, followers or more**.
+
+---
+
 ## 🚀 Overview
 
 Vibe delivers a polished mobile social experience focused on core Instagram-style features such as:
